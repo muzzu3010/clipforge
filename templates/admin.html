@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: #edf3ff;
+      margin: 0;
+      padding: 32px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-align: left;
+      vertical-align: top;
+    }
+    a { color: #9bc6ff; }
+    .pill {
+      display: inline-block;
+      background: rgba(34,197,94,0.15);
+      color: #d9ffe7;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h2>Admin Panel</h2>
+    <div>
+      <a href="/dashboard" style="color:#dfeaff; margin-right:12px;">Dashboard</a>
+      <a href="/logout" style="color:#dfeaff;">Logout</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Users</h3>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Created</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td><span class="pill">{{ user.role }}</span></td>
+            <td>{{ user.created_at }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Jobs</h3>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>User</th><th>Status</th><th>Created</th></tr>
+      </thead>
+      <tbody>
+        {% for job in jobs %}
+          <tr>
+            <td>{{ job.id[:8] }}</td>
+            <td>{{ job.user_id }}</td>
+            <td>{{ job.status }}</td>
+            <td>{{ job.created_at }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Social Accounts</h3>
+    <table>
+      <thead>
+        <tr><th>User</th><th>Platform</th><th>Account</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {% for account in social_accounts %}
+          <tr>
+            <td>{{ account.user_id }}</td>
+            <td>{{ account.platform }}</td>
+            <td>{{ account.account_name }}</td>
+            <td>{{ account.status }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Scheduled Posts</h3>
+    <table>
+      <thead>
+        <tr><th>User</th><th>Platform</th><th>Scheduled</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {% for post in scheduled_posts %}
+          <tr>
+            <td>{{ post.user_id }}</td>
+            <td>{{ post.platform }}</td>
+            <td>{{ post.scheduled_for }}</td>
+            <td>{{ post.status }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

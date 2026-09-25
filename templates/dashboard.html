@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: #edf3ff;
+      margin: 0;
+      padding: 32px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav a {
+      color: #dfeaff;
+      margin-left: 12px;
+      text-decoration: none;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-align: left;
+      font-size: 14px;
+    }
+    .pill {
+      display: inline-block;
+      background: rgba(59,130,246,0.18);
+      color: #d5e8ff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+    a { color: #9bc6ff; }
+
+    .premium-loader-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+    .premium-loader-overlay.visible {
+      display: flex;
+    }
+    .premium-loader-box {
+      width: min(360px, 86vw);
+      padding: 24px 22px 18px;
+      border-radius: 22px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: 0 26px 70px rgba(15, 23, 42, 0.6);
+      text-align: center;
+    }
+    .premium-loader-spinner {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      border: 4px solid rgba(148, 163, 184, 0.18);
+      border-top-color: #8b5cf6;
+      border-right-color: #3b82f6;
+      animation: premium-spin 0.9s linear infinite;
+    }
+    @keyframes premium-spin {
+      to { transform: rotate(360deg); }
+    }
+    .premium-loader-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.02em;
+      color: #f8fafc;
+      margin-bottom: 8px;
+    }
+    .premium-loader-status {
+      min-height: 24px;
+      color: #cbd5e1;
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+    }
+    .premium-progress-shell {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      margin: 0 auto 8px;
+    }
+    .premium-progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #60a5fa, #8b5cf6, #34d399);
+      transition: width 0.4s ease;
+      box-shadow: 0 0 18px rgba(96, 165, 250, 0.45);
+    }
+    .premium-progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-bottom: 12px;
+    }
+    .premium-dots {
+      display: inline-flex;
+      gap: 0.35rem;
+      justify-content: center;
+      align-items: center;
+    }
+    .premium-dots span {
+      width: 7px;
+      height: 7px;
+      background: #8b5cf6;
+      border-radius: 50%;
+      animation: premium-bounce 1.2s infinite ease-in-out;
+    }
+    .premium-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .premium-dots span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes premium-bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+      40% { transform: translateY(-4px); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="premiumPublishOverlay" class="premium-loader-overlay">
+    <div class="premium-loader-box">
+      <div class="premium-loader-spinner"></div>
+      <div class="premium-loader-title">Publishing to platform</div>
+      <div id="premiumStatusText" class="premium-loader-status">Preparing upload...</div>
+      <div class="premium-progress-shell">
+        <div id="premiumProgressFill" class="premium-progress-fill" style="width: 0%;"></div>
+      </div>
+      <div class="premium-progress-meta">
+        <span id="premiumProgressText">0%</span>
+        <span id="premiumStageText">Initialising</span>
+      </div>
+      <div class="premium-dots"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div>
+      <h2>Welcome, {{ user.username }}</h2>
+    </div>
+    <div class="nav">
+      <a href="/">Home</a>
+      <a href="/dashboard">Dashboard</a>
+      {% if user.role == 'admin' %}<a href="/admin">Admin</a>{% endif %}
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Connected Platforms</h3>
+      {% if social_accounts %}
+        {% for account in social_accounts %}
+          <span class="pill">{{ account.platform|upper }}</span>
+          {{ account.account_name }}
+          <br /><br />
+        {% endfor %}
+      {% else %}
+        <p>No connected platforms yet.</p>
+      {% endif %}
+      <hr style="margin: 18px 0; border-color: rgba(255,255,255,0.08);" />
+      <div style="margin-bottom: 12px;">
+        <a href="/auth/youtube" style="display:block; width:100%; text-align:center; padding:12px; border:none; border-radius:10px; background:linear-gradient(135deg,#ff0000,#ff4d4d); color:white; text-decoration:none; font-weight:700;">Connect YouTube</a>
+      </div>
+      <form id="socialForm">
+        <label>Platform</label>
+        <select id="platform" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+          <option value="instagram">Instagram</option>
+          <option value="facebook">Facebook</option>
+          <option value="tiktok">TikTok</option>
+          <option value="pinterest">Pinterest</option>
+          <option value="x">X</option>
+          <option value="youtube">YouTube</option>
+        </select>
+        <label style="margin-top:12px;">Account Name</label>
+        <input id="account_name" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);" />
+        <label style="margin-top:12px;">Profile URL or Page/User ID</label>
+        <input id="profile_url" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);" />
+        <label style="margin-top:12px;">Access Token</label>
+        <input id="access_token" type="password" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);" />
+        <button type="submit" style="margin-top:18px; width:100%; padding:10px; border:none; border-radius:10px; background:linear-gradient(135deg,#3b82f6,#8b5cf6); color:white; font-weight:700; cursor:pointer;">Connect account</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Generated Videos</h3>
+      {% if jobs %}
+        <table>
+          <thead>
+            <tr><th>Title</th><th>Status</th><th>Publish</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            {% for job in jobs %}
+              <tr>
+                <td>{{ job.title or ('Highlight ' + job.id[:8]) }}</td>
+                <td>{{ job.status }}</td>
+                <td>{% if job.published_platforms %}{{ job.published_platforms }}{% else %}Not published{% endif %}</td>
+                <td>
+                  {% if job.output_path %}
+                    <a href="/api/download/{{ job.id }}">Download</a>
+                  {% else %}
+                    Processing
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No videos generated yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h3>Quick Social Post</h3>
+      <form id="socialPostForm">
+        <label>Platform</label>
+        <select id="postPlatform" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+          <option value="instagram">Instagram</option>
+          <option value="facebook">Facebook</option>
+          <option value="tiktok">TikTok</option>
+          <option value="pinterest">Pinterest</option>
+          <option value="x">X</option>
+          <option value="youtube">YouTube</option>
+        </select>
+        <label style="margin-top:12px;">Video</label>
+        <select id="postJobId" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+          {% for job in jobs %}
+            {% if job.output_path %}
+              <option value="{{ job.id }}">{{ job.title or ('Highlight ' + job.id[:8]) }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <label style="margin-top:12px;">Message</label>
+        <textarea id="postMessage" rows="3" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">Check out this highlight! #clipforge</textarea>
+        <label style="margin-top:12px;">Action</label>
+        <select id="postAction" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+          <option value="publish">Publish now</option>
+          <option value="schedule">Schedule later</option>
+        </select>
+        <label style="margin-top:12px;">Schedule time</label>
+        <input id="postSchedule" type="datetime-local" style="width:100%; margin-top:8px; padding:8px; background:#101827; color:white; border-radius:8px; border:1px solid rgba(255,255,255,0.08);" />
+        <button type="submit" style="margin-top:18px; width:100%; padding:10px; border:none; border-radius:10px; background:linear-gradient(135deg,#10b981,#22c55e); color:white; font-weight:700; cursor:pointer;">Send to platform</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Scheduled Posts</h3>
+      {% if scheduled_posts %}
+        <table>
+          <thead>
+            <tr><th>Platform</th><th>Time</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {% for post in scheduled_posts %}
+              <tr>
+                <td>{{ post.platform|upper }}</td>
+                <td>{{ post.scheduled_for }}</td>
+                <td>{{ post.status }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No scheduled posts yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    const premiumPublishOverlay = document.getElementById('premiumPublishOverlay');
+    const premiumStatusText = document.getElementById('premiumStatusText');
+    const premiumProgressText = document.getElementById('premiumProgressText');
+    const premiumStageText = document.getElementById('premiumStageText');
+    const premiumProgressFill = document.getElementById('premiumProgressFill');
+    let premiumTimer = null;
+
+    function updatePremiumProgress(percentage, statusText, stageLabel) {
+      premiumProgressText.textContent = `${percentage}%`;
+      premiumStatusText.textContent = statusText;
+      premiumStageText.textContent = stageLabel;
+      premiumProgressFill.style.width = `${percentage}%`;
+    }
+
+    function startPremiumProgress() {
+      clearInterval(premiumTimer);
+      const stages = [
+        { target: 15, text: 'Preparing upload...', stage: 'Initialising' },
+        { target: 38, text: 'Uploading video...', stage: 'Uploading' },
+        { target: 61, text: 'Uploading metadata...', stage: 'Processing' },
+        { target: 84, text: 'Publishing to platform...', stage: 'Publishing' },
+        { target: 100, text: 'Finalising publish...', stage: 'Finishing' }
+      ];
+
+      let current = 4;
+      let stageIndex = 0;
+      updatePremiumProgress(current, 'Preparing upload...', 'Initialising');
+
+      premiumTimer = setInterval(() => {
+        if (current >= 96) {
+          clearInterval(premiumTimer);
+          return;
+        }
+
+        current = Math.min(current + Math.random() * 14 + 7, 96);
+        while (stageIndex < stages.length - 1 && current >= stages[stageIndex].target) {
+          stageIndex += 1;
+        }
+
+        const activeStage = stages[Math.min(stageIndex, stages.length - 1)];
+        updatePremiumProgress(Math.round(current), activeStage.text, activeStage.stage);
+      }, 420);
+    }
+
+    function stopPremiumProgress() {
+      clearInterval(premiumTimer);
+      updatePremiumProgress(100, 'Publish complete.', 'Done');
+    }
+
+    function setPremiumLoadingState(isLoading) {
+      premiumPublishOverlay.classList.toggle('visible', isLoading);
+      if (isLoading) {
+        startPremiumProgress();
+      } else {
+        clearInterval(premiumTimer);
+        updatePremiumProgress(0, 'Ready to publish', 'Idle');
+      }
+    }
+
+    document.getElementById('socialPostForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const payload = {
+        platform: document.getElementById('postPlatform').value,
+        job_id: document.getElementById('postJobId').value,
+        message: document.getElementById('postMessage').value,
+        action: document.getElementById('postAction').value,
+        scheduled_for: document.getElementById('postSchedule').value,
+        media_url: ''
+      };
+
+      if (!payload.job_id) {
+        alert('Please choose a generated video first.');
+        return;
+      }
+
+      if (payload.action === 'schedule' && !payload.scheduled_for) {
+        alert('Please choose a schedule time when scheduling a platform post.');
+        return;
+      }
+
+      setPremiumLoadingState(true);
+
+      try {
+        const response = await fetch('/api/social-posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to send post.');
+        }
+
+        stopPremiumProgress();
+        alert(data.message || 'Post sent successfully.');
+        setTimeout(() => {
+          window.location.reload();
+        }, 700);
+      } catch (error) {
+        clearInterval(premiumTimer);
+        updatePremiumProgress(0, error.message || 'Failed to send post.', 'Error');
+        alert(error.message || 'Failed to send post.');
+      } finally {
+        setTimeout(() => {
+          setPremiumLoadingState(false);
+        }, 700);
+      }
+    });
+  </script>
+
+  <script>
+    document.getElementById('socialForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const payload = {
+        platform: document.getElementById('platform').value,
+        account_name: document.getElementById('account_name').value,
+        profile_url: document.getElementById('profile_url').value,
+        access_token: document.getElementById('access_token').value
+      };
+
+      const response = await fetch('/api/social-accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        alert('Social account connected successfully.');
+        window.location.reload();
+      } else {
+        const data = await response.json();
+        alert(data.error || 'Failed to connect account');
+      }
+    });
+  </script>
+</body>
+</html>

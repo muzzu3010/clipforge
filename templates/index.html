@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClipForge - Professional Video Highlight Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ---------- CSS Reset & Base ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e1a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+            background-image: radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
+                              radial-gradient(ellipse at bottom right, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* ---------- Header ---------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo i {
+            -webkit-text-fill-color: initial;
+            color: #60a5fa;
+            font-size: 1.8rem;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .auth-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .auth-link.secondary {
+            background: rgba(255, 255, 255, 0.04);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-link.primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
+        }
+
+        .auth-link:hover {
+            transform: translateY(-1px);
+        }
+
+        /* ---------- Upload Grid ---------- */
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .upload-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .upload-card .card-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .upload-card .card-title i {
+            color: #60a5fa;
+        }
+
+        /* ---------- File Drop Zone ---------- */
+        .file-drop-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .file-drop-zone:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            background: rgba(59, 130, 246, 0.03);
+        }
+
+        .file-drop-zone.dragover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .file-drop-zone .icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            font-size: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .file-drop-zone h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .file-drop-zone p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .file-drop-zone .file-types {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        .file-drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .video-preview {
+            margin-top: 0.75rem;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background: #000;
+            max-height: 180px;
+        }
+
+        .video-preview video {
+            width: 100%;
+            display: block;
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .file-name i {
+            color: #22c55e;
+        }
+
+        /* ---------- Form Elements ---------- */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .form-group select,
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.6rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            cursor: pointer;
+        }
+
+        .form-group select:focus {
+            border-color: #3b82f6;
+        }
+
+        .form-group select option {
+            background: #1a1f33;
+        }
+
+        .form-group input[type="file"] {
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .form-group input[type="file"]::file-selector-button {
+            padding: 0.2rem 0.6rem;
+            border: none;
+            border-radius: 0.4rem;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .form-group .file-selected {
+            font-size: 0.75rem;
+            color: #22c55e;
+            margin-top: 0.2rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.2rem 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #3b82f6;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            border-radius: 0.75rem;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.6rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        /* ---------- Quick Info ---------- */
+        .quick-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .quick-info .info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 0.75rem;
+            padding: 0.6rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .quick-info .info-card .label {
+            font-size: 0.6rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .quick-info .info-card .value {
+            font-size: 0.8rem;
+            margin-top: 0.1rem;
+        }
+
+        /* ---------- Processing View ---------- */
+        .processing-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.05);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        .btn-spinner {
+            width: 0.9rem;
+            height: 0.9rem;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+        }
+
+        .publish-loading-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 6, 23, 0.72);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            border-radius: 18px;
+        }
+
+        .publish-loading-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 24px 50px rgba(2, 6, 23, 0.5);
+        }
+
+        .publish-loading-spinner {
+            width: 46px;
+            height: 46px;
+            border: 4px solid rgba(148, 163, 184, 0.2);
+            border-top: 4px solid #60a5fa;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .publish-loading-text {
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: #e2e8f0;
+        }
+
+        .publish-status-line {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            opacity: 0.9;
+            min-height: 1.1rem;
+        }
+
+        .publish-progress-shell {
+            width: min(280px, 72vw);
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.14);
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .publish-progress-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #60a5fa 0%, #8b5cf6 50%, #34d399 100%);
+            box-shadow: 0 0 18px rgba(96, 165, 250, 0.5);
+            transition: width 0.45s ease;
+        }
+
+        .publish-progress-meta {
+            width: min(280px, 72vw);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-top: 0.15rem;
+        }
+
+        .publish-dots {
+            display: inline-flex;
+            gap: 0.35rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .publish-dots span {
+            width: 0.45rem;
+            height: 0.45rem;
+            border-radius: 50%;
+            background: #60a5fa;
+            animation: dotPulse 0.9s ease-in-out infinite;
+        }
+
+        .publish-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .publish-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes dotPulse {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-steps {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .status-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            color: #64748b;
+            opacity: 0.4;
+            transition: all 0.5s;
+        }
+
+        .status-step.active {
+            opacity: 1;
+            color: #60a5fa;
+        }
+
+        .status-step.done {
+            opacity: 1;
+            color: #22c55e;
+        }
+
+        .status-step .step-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .status-step.active .step-icon {
+            border-color: #60a5fa;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .status-step.done .step-icon {
+            border-color: #22c55e;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ---------- Result View ---------- */
+        .result-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .result-card video {
+            width: 100%;
+            display: block;
+            background: #000;
+            max-height: 500px;
+        }
+
+        .result-actions {
+            padding: 1.25rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-actions .left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .result-actions .left .info {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .result-actions .left .info strong {
+            color: #e2e8f0;
+        }
+
+        .result-actions .right {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* ---------- Editor View ---------- */
+        .editor-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .timeline-header .time-display {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timeline-header .btn-add {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            padding: 0.3rem 0.8rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .timeline-header .btn-add:hover {
+            background: rgba(34, 197, 94, 0.25);
+        }
+
+        .timeline-bar {
+            position: relative;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .timeline-bar .segment {
+            position: absolute;
+            top: 3px;
+            height: calc(100% - 6px);
+            background: rgba(59, 130, 246, 0.35);
+            border: 2px solid #3b82f6;
+            border-radius: 0.4rem;
+            cursor: grab;
+            transition: border-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.55rem;
+            font-weight: 600;
+            color: #60a5fa;
+            min-width: 20px;
+        }
+
+        .timeline-bar .segment .handle {
+            position: absolute;
+            top: 0;
+            width: 8px;
+            height: 100%;
+            cursor: ew-resize;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+
+        .timeline-bar .segment .handle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .timeline-bar .segment .handle.left {
+            left: -1px;
+        }
+
+        .timeline-bar .segment .handle.right {
+            right: -1px;
+        }
+
+        .timeline-bar .current-time {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: #ef4444;
+            z-index: 5;
+            pointer-events: none;
+            transition: left 0.1s;
+        }
+
+        .segment-list {
+            margin-top: 0.5rem;
+            max-height: 100px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .segment-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .segment-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .segment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.4rem;
+            font-size: 0.75rem;
+        }
+
+        .segment-item .idx {
+            font-weight: 600;
+            color: #64748b;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .segment-item .time-range {
+            color: #94a3b8;
+            font-variant-numeric: tabular-nums;
+            flex: 1;
+        }
+
+        .segment-item .duration {
+            color: #64748b;
+            font-size: 0.65rem;
+            padding: 0.05rem 0.3rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 0.25rem;
+        }
+
+        .segment-item button {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.3rem;
+            transition: all 0.2s;
+            font-size: 0.7rem;
+        }
+
+        .segment-item button:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .segment-item .play-btn:hover {
+            color: #3b82f6;
+        }
+
+        .segment-item .delete-btn:hover {
+            color: #ef4444;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .editor-actions .btn {
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 0.6rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ---------- Toast ---------- */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            animation: slideIn 0.3s ease;
+            min-width: 250px;
+        }
+
+        .toast.error {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .toast.success {
+            border-color: rgba(34, 197, 94, 0.3);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .result-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .result-actions .left {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .result-actions .right {
+                flex-wrap: wrap;
+            }
+
+            .status-steps {
+                gap: 0.75rem;
+            }
+
+            .status-step .step-label {
+                font-size: 0.6rem;
+            }
+
+            .processing-card {
+                padding: 1.5rem;
+            }
+        }
+
+        /* ---------- Hidden ---------- */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-film"></i>
+            ClipForge
+        </div>
+
+        <div class="header-actions">
+            <span class="badge">
+                <i class="fas fa-magic" style="margin-right: 0.3rem;"></i>
+                Professional Video Highlight Generator
+            </span>
+            {% if is_logged_in %}
+                <a href="/dashboard" class="auth-link secondary">Dashboard</a>
+                <a href="/logout" class="auth-link primary">Logout</a>
+            {% else %}
+                <a href="/login" class="auth-link secondary">Login</a>
+                <a href="/signup" class="auth-link primary">Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+        <div class="upload-grid">
+            <!-- Upload Card -->
+            <div class="upload-card">
+                <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> Upload Video</div>
+                <div class="file-drop-zone" id="dropZone">
+                    <div class="icon-wrapper"><i class="fas fa-video"></i></div>
+                    <h3>Drop your video here</h3>
+                    <p>or click to browse</p>
+                    <div class="file-types">MP4, MOV, AVI, MKV • Max 5GB</div>
+                    <input type="file" id="videoInput" accept="video/*" />
+                </div>
+                <div id="videoPreviewContainer" style="display:none;">
+                    <div class="video-preview">
+                        <video id="videoPreview" controls></video>
+                    </div>
+                    <div class="file-name">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="fileName">video.mp4</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Card -->
+            <div class="upload-card">
+                <div class="card-title"><i class="fas fa-sliders-h"></i> Settings</div>
+
+                <div class="form-group">
+                    <label for="durationSelect"><i class="fas fa-clock"></i> Highlight Duration</label>
+                    <select id="durationSelect">
+                        <option value="30">30 seconds</option>
+                        <option value="60" selected>1 minute</option>
+                        <option value="90">90 seconds</option>
+                        <option value="120">2 minutes</option>
+                        <option value="180">3 minutes</option>
+                        <option value="300">5 minutes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="musicSelect"><i class="fas fa-music"></i> Background Music</label>
+                    <select id="musicSelect">
+                        <option value="none">No Music</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="uploadMusicContainer" style="display:none;">
+                    <label><i class="fas fa-upload"></i> Upload Custom Music</label>
+                    <input type="file" id="musicInput" accept="audio/*" />
+                    <div id="musicFileName" class="file-selected"></div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="muteCheckbox" />
+                    <label for="muteCheckbox"><i class="fas fa-volume-mute"></i> Mute original video audio</label>
+                </div>
+
+                <button class="btn-primary" id="generateBtn">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    Generate Highlight
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="quick-info">
+            <div class="info-card">
+                <div class="label"><i class="fas fa-scissors"></i> Smart Detection</div>
+                <div class="value">Auto selects best moments</div>
+            </div>
+            <div class="info-card">
+                <div class="label"><i class="fas fa-music"></i> Music Library</div>
+                <div class="value">Built-in + custom upload</div>
+            </div>
+            <div class="info-card">
+                <div class="label"><i class="fas fa-edit"></i> Full Control</div>
+                <div class="value">Edit segments on timeline</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing View -->
+    <div id="processingView" class="hidden">
+        <div class="processing-card">
+            <div class="spinner"></div>
+            <h2 id="statusTitle">Processing Your Video</h2>
+            <p style="color:#94a3b8; font-size:0.9rem;" id="statusDescription">This may take a few moments...</p>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progressLabel">0%</span>
+                    <span id="progressTime">Calculating...</span>
+                </div>
+            </div>
+
+            <div class="status-steps" id="statusSteps">
+                <div class="status-step" data-step="uploaded">
+                    <div class="step-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <span class="step-label">Uploaded</span>
+                </div>
+                <div class="status-step" data-step="analyzing">
+                    <div class="step-icon"><i class="fas fa-brain"></i></div>
+                    <span class="step-label">Analyzing</span>
+                </div>
+                <div class="status-step" data-step="cutting">
+                    <div class="step-icon"><i class="fas fa-cut"></i></div>
+                    <span class="step-label">Cutting</span>
+                </div>
+                <div class="status-step" data-step="concatenating">
+                    <div class="step-icon"><i class="fas fa-link"></i></div>
+                    <span class="step-label">Merging</span>
+                </div>
+                <div class="status-step" data-step="audio">
+                    <div class="step-icon"><i class="fas fa-music"></i></div>
+                    <span class="step-label">Audio</span>
+                </div>
+                <div class="status-step" data-step="done">
+                    <div class="step-icon"><i class="fas fa-check"></i></div>
+                    <span class="step-label">Done</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result View -->
+    <div id="resultView" class="hidden">
+        <div class="result-card">
+            <video id="resultVideo" controls></video>
+            <div class="result-actions">
+                <div class="left">
+                    <div class="info">
+                        <strong id="resultDuration">0:00</strong>
+                        <span style="color:#64748b;">highlight</span>
+                    </div>
+                    <span style="color:#64748b; font-size:0.7rem;">|</span>
+                    <div class="info">
+                        <span style="color:#64748b;">Segments: </span>
+                        <strong id="resultSegments">0</strong>
+                    </div>
+                    <div class="info">
+                        <span style="color:#64748b;">Music: </span>
+                        <strong id="resultMusic">None</strong>
+                    </div>
+                </div>
+                <div class="right">
+                    <button class="btn-secondary" id="editBtn">
+                        <i class="fas fa-pen"></i> Edit
+                    </button>
+                    <button class="btn-secondary" id="youtubePublishBtn" type="button">
+                        <i class="fab fa-youtube"></i> Publish to YouTube
+                    </button>
+                    <a id="downloadLink" href="#" download class="btn-secondary btn-download">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                    <button class="btn-secondary" id="resetBtn">
+                        <i class="fas fa-plus"></i> New
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="publishModal" class="hidden" style="position:fixed; inset:0; background:rgba(2,6,23,0.7); display:flex; align-items:center; justify-content:center; z-index:50; padding:1rem;">
+        <div style="width:min(560px, 100%); background:#0f172a; border:1px solid rgba(148,163,184,0.2); border-radius:18px; padding:1.5rem; box-shadow:0 30px 60px rgba(2,6,23,0.5); position:relative;">
+            <div id="publishLoadingOverlay" class="hidden publish-loading-overlay">
+                <div class="publish-loading-box">
+                    <div class="publish-loading-spinner"></div>
+                    <div class="publish-loading-text">Publishing to YouTube</div>
+                    <div class="publish-status-line" id="publishStatusLine">Preparing upload...</div>
+                    <div class="publish-progress-shell">
+                        <div class="publish-progress-fill" id="publishProgressFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="publish-progress-meta">
+                        <span id="publishProgressText">0%</span>
+                        <span id="publishStageText">Initialising</span>
+                    </div>
+                    <div class="publish-dots"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 style="margin:0; font-size:1.2rem;">Publish Settings</h3>
+                <button type="button" id="closePublishModal" style="background:transparent; border:none; color:#cbd5e1; font-size:1.5rem; cursor:pointer;">×</button>
+            </div>
+            <form id="publishForm">
+                <div style="display:grid; gap:0.9rem;">
+                    <div>
+                        <label style="display:block; margin-bottom:0.35rem; color:#94a3b8; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Title</label>
+                        <input id="publishTitle" type="text" value="ClipForge Highlight" style="width:100%; padding:0.8rem 0.9rem; border-radius:10px; border:1px solid rgba(148,163,184,0.2); background:#111827; color:#e2e8f0;" />
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:0.35rem; color:#94a3b8; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Description</label>
+                        <textarea id="publishDescription" rows="3" style="width:100%; padding:0.8rem 0.9rem; border-radius:10px; border:1px solid rgba(148,163,184,0.2); background:#111827; color:#e2e8f0; resize:vertical;">Generated by ClipForge</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:0.35rem; color:#94a3b8; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Tags</label>
+                        <input id="publishTags" type="text" value="clipforge,highlight,video" style="width:100%; padding:0.8rem 0.9rem; border-radius:10px; border:1px solid rgba(148,163,184,0.2); background:#111827; color:#e2e8f0;" />
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:0.35rem; color:#94a3b8; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Thumbnail</label>
+                        <input id="publishThumbnail" type="file" accept="image/*" style="width:100%; padding:0.6rem; border-radius:10px; border:1px solid rgba(148,163,184,0.2); background:#111827; color:#e2e8f0;" />
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem;">
+                        <div>
+                            <label style="display:block; margin-bottom:0.35rem; color:#94a3b8; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Action</label>
+                            <select id="publishMode" style="width:100%; padding:0.8rem 0.9rem; border-radius:10px; border:1px solid rgba(148,163,184,0.2); background:#111827; color:#e2e8f0;">
+                                <option value="publish">Publish now</option>
+                                <option value="schedule">Schedule</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom:0.35rem; color:#94a3b8; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Privacy</label>
+                            <select id="publishPrivacy" style="width:100%; padding:0.8rem 0.9rem; border-radius:10px; border:1px solid rgba(148,163,184,0.2); background:#111827; color:#e2e8f0;">
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                                <option value="unlisted">Unlisted</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:0.35rem; color:#94a3b8; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">Schedule time</label>
+                        <input id="publishSchedule" type="datetime-local" style="width:100%; padding:0.8rem 0.9rem; border-radius:10px; border:1px solid rgba(148,163,184,0.2); background:#111827; color:#e2e8f0;" />
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem;">
+                        <button type="button" id="cancelPublishBtn" class="btn-secondary" style="padding:0.8rem 1rem; border:none; border-radius:10px; background:rgba(148,163,184,0.12); color:#e2e8f0; cursor:pointer;">Cancel</button>
+                        <button type="submit" class="btn-primary" style="padding:0.8rem 1rem; border:none; border-radius:10px; background:linear-gradient(135deg,#3b82f6,#8b5cf6); color:white; cursor:pointer; font-weight:700;">Continue</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Editor View -->
+    <div id="editorView" class="hidden">
+        <div class="editor-card">
+            <video id="editorVideo" controls style="width:100%; border-radius:0.5rem; max-height:350px; background:#000;"></video>
+            <div style="margin-top:0.75rem;">
+                <div class="timeline-header">
+                    <span class="time-display" id="currentTimeDisplay">00:00</span>
+                    <span class="time-display" id="durationDisplay">00:00</span>
+                    <button class="btn-add" id="addSegmentBtn"><i class="fas fa-plus"></i> Add at current</button>
+                </div>
+                <div class="timeline-bar" id="timelineBar">
+                    <div class="current-time" id="timeIndicator" style="left:0%;"></div>
+                </div>
+                <div class="segment-list" id="segmentList"></div>
+                <div class="editor-actions">
+                    <button class="btn btn-generate" id="regenerateBtn"><i class="fas fa-wand-magic-sparkles"></i> Regenerate</button>
+                    <button class="btn btn-cancel" id="cancelEditBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- JavaScript -->
+<script>
+// ---------- State ----------
+let jobId = null;
+let segments = [];
+let videoFile = null;
+let musicFile = null;
+let videoUrl = null;
+let videoDuration = 0;
+let currentTime = 0;
+let dragState = null;
+let statusPollInterval = null;
+let isEditing = false;
+
+// ---------- DOM Refs ----------
+const videoInput = document.getElementById('videoInput');
+const musicInput = document.getElementById('musicInput');
+const dropZone = document.getElementById('dropZone');
+const generateBtn = document.getElementById('generateBtn');
+const durationSelect = document.getElementById('durationSelect');
+const musicSelect = document.getElementById('musicSelect');
+const muteCheckbox = document.getElementById('muteCheckbox');
+const uploadMusicContainer = document.getElementById('uploadMusicContainer');
+const mainContent = document.getElementById('mainContent');
+const processingView = document.getElementById('processingView');
+const resultView = document.getElementById('resultView');
+const editorView = document.getElementById('editorView');
+const statusTitle = document.getElementById('statusTitle');
+const statusDescription = document.getElementById('statusDescription');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+const progressTime = document.getElementById('progressTime');
+
+const videoPreview = document.getElementById('videoPreview');
+const videoPreviewContainer = document.getElementById('videoPreviewContainer');
+const fileName = document.getElementById('fileName');
+const musicFileName = document.getElementById('musicFileName');
+
+const resultVideo = document.getElementById('resultVideo');
+const youtubePublishBtn = document.getElementById('youtubePublishBtn');
+const publishModal = document.getElementById('publishModal');
+const publishForm = document.getElementById('publishForm');
+const publishLoadingOverlay = document.getElementById('publishLoadingOverlay');
+const closePublishModal = document.getElementById('closePublishModal');
+const publishMode = document.getElementById('publishMode');
+const publishPrivacy = document.getElementById('publishPrivacy');
+const publishSchedule = document.getElementById('publishSchedule');
+const cancelPublishBtn = document.getElementById('cancelPublishBtn');
+const downloadLink = document.getElementById('downloadLink');
+const resultDuration = document.getElementById('resultDuration');
+const resultSegments = document.getElementById('resultSegments');
+const resultMusic = document.getElementById('resultMusic');
+
+const editorVideo = document.getElementById('editorVideo');
+const timelineBar = document.getElementById('timelineBar');
+const segmentList = document.getElementById('segmentList');
+const currentTimeDisplay = document.getElementById('currentTimeDisplay');
+const durationDisplay = document.getElementById('durationDisplay');
+const timeIndicator = document.getElementById('timeIndicator');
+const addSegmentBtn = document.getElementById('addSegmentBtn');
+const regenerateBtn = document.getElementById('regenerateBtn');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
+const editBtn = document.getElementById('editBtn');
+const resetBtn = document.getElementById('resetBtn');
+const toastContainer = document.getElementById('toastContainer');
+
+// ---------- Toast System ----------
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// ---------- Helpers ----------
+function fmt(s) {
+    if (!s || isNaN(s)) return '00:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
+function fmtDuration(s) {
+    if (!s || isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    if (m > 0) return `${m}:${String(sec).padStart(2, '0')}`;
+    return `0:${String(sec).padStart(2, '0')}`;
+}
+
+// ---------- Load Music Library ----------
+async function loadMusicLibrary() {
+    try {
+        const res = await fetch('/api/music-library');
+        const musicList = await res.json();
+        const select = document.getElementById('musicSelect');
+        select.innerHTML = '';
+        musicList.forEach(music => {
+            const option = document.createElement('option');
+            option.value = music.id;
+            option.textContent = music.name || music.id;
+            select.appendChild(option);
+        });
+        const option = document.createElement('option');
+        option.value = 'upload';
+        option.textContent = '📁 Upload Custom Music';
+        select.appendChild(option);
+    } catch (err) {
+        console.error('Failed to load music library:', err);
+    }
+}
+
+// ---------- Music Select ----------
+musicSelect.addEventListener('change', function() {
+    if (this.value === 'upload') {
+        uploadMusicContainer.style.display = 'block';
+    } else {
+        uploadMusicContainer.style.display = 'none';
+    }
+});
+
+// ---------- Update Progress ----------
+function updateProgress(percentage, step, time = '') {
+    progressFill.style.width = percentage + '%';
+    progressLabel.textContent = Math.round(percentage) + '%';
+    if (time) progressTime.textContent = time;
+    
+    // Update status steps
+    const steps = document.querySelectorAll('.status-step');
+    let found = false;
+    steps.forEach(el => {
+        const s = el.dataset.step;
+        el.classList.remove('active', 'done');
+        if (s === step) {
+            el.classList.add('active');
+            found = true;
+        } else if (found) {
+            el.classList.add('done');
+        }
+    });
+}
+
+// ---------- Timeline Rendering ----------
+function updateTimeline() {
+    const bar = timelineBar;
+    bar.innerHTML = '';
+    
+    const indicator = document.createElement('div');
+    indicator.className = 'current-time';
+    indicator.id = 'timeIndicator';
+    const pct = videoDuration ? (currentTime / videoDuration) * 100 : 0;
+    indicator.style.left = pct + '%';
+    bar.appendChild(indicator);
+
+    segments.forEach((seg, idx) => {
+        const left = (seg.start / videoDuration) * 100;
+        const width = ((seg.end - seg.start) / videoDuration) * 100;
+        const el = document.createElement('div');
+        el.className = 'segment';
+        el.style.left = left + '%';
+        el.style.width = width + '%';
+        el.innerHTML = `<span>${idx + 1}</span>
+            <div class="handle left" data-idx="${idx}" data-type="start"></div>
+            <div class="handle right" data-idx="${idx}" data-type="end"></div>`;
+        bar.appendChild(el);
+    });
+
+    segmentList.innerHTML = '';
+    segments.forEach((seg, idx) => {
+        const item = document.createElement('div');
+        item.className = 'segment-item';
+        item.innerHTML = `
+            <span class="idx">#${idx + 1}</span>
+            <span class="time-range">${fmt(seg.start)} → ${fmt(seg.end)}</span>
+            <span class="duration">${(seg.end - seg.start).toFixed(1)}s</span>
+            <button class="play-btn" data-idx="${idx}"><i class="fas fa-play"></i></button>
+            <button class="delete-btn" data-idx="${idx}"><i class="fas fa-trash"></i></button>
+        `;
+        segmentList.appendChild(item);
+    });
+
+    segmentList.querySelectorAll('.play-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.idx);
+            editorVideo.currentTime = segments[idx].start;
+            editorVideo.play();
+        });
+    });
+    segmentList.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.idx);
+            segments.splice(idx, 1);
+            updateTimeline();
+        });
+    });
+
+    bar.querySelectorAll('.handle').forEach(handle => {
+        handle.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(handle.dataset.idx);
+            const type = handle.dataset.type;
+            startDrag(e, idx, type);
+        });
+    });
+}
+
+// ---------- Drag Logic ----------
+function startDrag(e, idx, type) {
+    e.preventDefault();
+    dragState = { index: idx, type: type };
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup', onDragEnd);
+}
+
+function onDragMove(e) {
+    if (!dragState) return;
+    const rect = timelineBar.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const time = Math.max(0, Math.min(videoDuration, x * videoDuration));
+    const seg = segments[dragState.index];
+    if (dragState.type === 'start') {
+        if (time < seg.end - 0.3) seg.start = time;
+    } else {
+        if (time > seg.start + 0.3) seg.end = time;
+    }
+    updateTimeline();
+}
+
+function onDragEnd() {
+    dragState = null;
+    document.removeEventListener('mousemove', onDragMove);
+    document.removeEventListener('mouseup', onDragEnd);
+}
+
+// ---------- API Calls ----------
+async function uploadAndGenerate() {
+    const video = videoInput.files[0];
+    if (!video) { showToast('Please select a video', 'error'); return; }
+    
+    const duration = parseInt(durationSelect.value);
+    const mute = muteCheckbox.checked;
+    let musicId = musicSelect.value;
+    
+    const formData = new FormData();
+    formData.append('video', video);
+    
+    if (musicId === 'upload') {
+        const music = musicInput.files[0];
+        if (music) {
+            formData.append('music', music);
+        } else {
+            showToast('Please select a music file to upload', 'error');
+            return;
+        }
+        musicId = null;
+    }
+
+    try {
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        
+        // Show processing view
+        mainContent.classList.add('hidden');
+        processingView.classList.remove('hidden');
+        updateProgress(5, 'uploaded', 'Uploading...');
+        statusTitle.textContent = 'Uploading Your Video';
+        statusDescription.textContent = 'Preparing for processing...';
+        
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Upload failed');
+        
+        jobId = data.id;
+        videoFile = video;
+        videoUrl = URL.createObjectURL(video);
+        
+        updateProgress(10, 'analyzing', 'Analyzing video...');
+        statusTitle.textContent = 'Analyzing Your Video';
+        statusDescription.textContent = 'Finding the best moments...';
+        
+        const genRes = await fetch(`/api/auto-generate/${jobId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                targetDuration: duration,
+                mute: mute,
+                musicId: musicId
+            })
+        });
+        const genData = await genRes.json();
+        if (!genRes.ok) throw new Error(genData.error || 'Generation failed');
+        
+        segments = genData.segments;
+        updateProgress(20, 'cutting', 'Cutting segments...');
+        statusTitle.textContent = 'Cutting Segments';
+        statusDescription.textContent = `Creating ${segments.length} clips...`;
+        
+        if (statusPollInterval) clearInterval(statusPollInterval);
+        let startTime = Date.now();
+        statusPollInterval = setInterval(async () => {
+            try {
+                const statusRes = await fetch(`/api/status/${jobId}`);
+                const statusData = await statusRes.json();
+                
+                // Estimate progress based on status
+                let progress = 20;
+                let step = 'cutting';
+                let time = 'Processing...';
+                
+                if (statusData.status === 'processing') {
+                    progress = 40;
+                    step = 'cutting';
+                    time = 'Cutting segments...';
+                } else if (statusData.status === 'concatenating') {
+                    progress = 60;
+                    step = 'concatenating';
+                    time = 'Merging clips...';
+                } else if (statusData.status === 'mixing') {
+                    progress = 80;
+                    step = 'audio';
+                    time = 'Adding audio...';
+                } else if (statusData.status === 'done') {
+                    clearInterval(statusPollInterval);
+                    updateProgress(100, 'done', 'Complete!');
+                    statusTitle.textContent = '✨ Complete!';
+                    statusDescription.textContent = 'Your highlight video is ready.';
+                    setTimeout(() => showResult(), 800);
+                    return;
+                } else if (statusData.status === 'error') {
+                    clearInterval(statusPollInterval);
+                    showToast('Error: ' + statusData.error, 'error');
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate Highlight';
+                    mainContent.classList.remove('hidden');
+                    processingView.classList.add('hidden');
+                    return;
+                }
+                
+                updateProgress(progress, step, time);
+                statusTitle.textContent = `Processing... ${Math.round(progress)}%`;
+                statusDescription.textContent = time;
+                
+            } catch (e) {
+                // ignore
+            }
+        }, 1500);
+        
+    } catch (err) {
+        showToast(err.message, 'error');
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate Highlight';
+        mainContent.classList.remove('hidden');
+        processingView.classList.add('hidden');
+    }
+}
+
+function showResult() {
+    processingView.classList.add('hidden');
+    resultView.classList.remove('hidden');
+    
+    const downloadUrl = `/api/download/${jobId}`;
+    resultVideo.src = downloadUrl;
+    downloadLink.href = downloadUrl;
+    resultVideo.load();
+    
+    let total = 0;
+    segments.forEach(s => total += s.end - s.start);
+    resultDuration.textContent = fmtDuration(total);
+    resultSegments.textContent = segments.length;
+    
+    const musicSelect = document.getElementById('musicSelect');
+    if (musicSelect.value === 'upload') {
+        const musicFile = musicInput.files[0];
+        resultMusic.textContent = musicFile ? musicFile.name : 'Custom';
+    } else {
+        const selectedOption = musicSelect.options[musicSelect.selectedIndex];
+        resultMusic.textContent = selectedOption ? selectedOption.text : 'None';
+    }
+    
+    generateBtn.disabled = false;
+    generateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate Highlight';
+    showToast('✅ Highlight video ready!', 'success');
+}
+
+function openEditor() {
+    resultView.classList.add('hidden');
+    editorView.classList.remove('hidden');
+    
+    if (videoUrl) {
+        editorVideo.src = videoUrl;
+        editorVideo.onloadedmetadata = () => {
+            videoDuration = editorVideo.duration;
+            durationDisplay.textContent = fmt(videoDuration);
+            updateTimeline();
+        };
+    }
+    isEditing = true;
+}
+
+function regenerateHighlight() {
+    if (!jobId || segments.length === 0) {
+        showToast('No segments to generate', 'error');
+        return;
+    }
+    
+    const mute = muteCheckbox.checked;
+    let musicId = musicSelect.value;
+    
+    if (musicId === 'upload') {
+        const music = musicInput.files[0];
+        if (music) {
+            const formData = new FormData();
+            formData.append('music', music);
+            fetch(`/api/upload-music/${jobId}`, { method: 'POST', body: formData })
+                .then(() => {
+                    doRegenerate(jobId, segments, mute, null);
+                })
+                .catch(err => showToast('Failed to upload music', 'error'));
+            return;
+        }
+        musicId = null;
+    }
+    
+    doRegenerate(jobId, segments, mute, musicId);
+}
+
+function doRegenerate(jobId, segments, mute, musicId) {
+    regenerateBtn.disabled = true;
+    regenerateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+    showToast('🔄 Regenerating highlight...', 'info');
+    
+    fetch(`/api/generate/${jobId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            segments: segments,
+            mute: mute,
+            musicId: musicId
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) throw new Error(data.error);
+        
+        if (statusPollInterval) clearInterval(statusPollInterval);
+        statusPollInterval = setInterval(async () => {
+            try {
+                const statusRes = await fetch(`/api/status/${jobId}`);
+                const statusData = await statusRes.json();
+                if (statusData.status === 'done') {
+                    clearInterval(statusPollInterval);
+                    editorView.classList.add('hidden');
+                    resultView.classList.remove('hidden');
+                    const downloadUrl = `/api/download/${jobId}`;
+                    resultVideo.src = downloadUrl;
+                    downloadLink.href = downloadUrl;
+                    resultVideo.load();
+                    showToast('✅ Highlight updated!', 'success');
+                    regenerateBtn.disabled = false;
+                    regenerateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Regenerate';
+                } else if (statusData.status === 'error') {
+                    clearInterval(statusPollInterval);
+                    showToast('Error: ' + statusData.error, 'error');
+                    regenerateBtn.disabled = false;
+                    regenerateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Regenerate';
+                }
+            } catch (e) { /* ignore */ }
+        }, 1500);
+    })
+    .catch(err => {
+        showToast(err.message, 'error');
+        regenerateBtn.disabled = false;
+        regenerateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Regenerate';
+    });
+}
+
+function resetProject() {
+    if (statusPollInterval) clearInterval(statusPollInterval);
+    jobId = null;
+    segments = [];
+    videoFile = null;
+    musicFile = null;
+    videoUrl = null;
+    videoInput.value = '';
+    musicInput.value = '';
+    musicFileName.textContent = '';
+    videoPreviewContainer.style.display = 'none';
+    mainContent.classList.remove('hidden');
+    processingView.classList.add('hidden');
+    resultView.classList.add('hidden');
+    editorView.classList.add('hidden');
+    generateBtn.disabled = false;
+    generateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate Highlight';
+    isEditing = false;
+    showToast('🔄 Reset complete', 'info');
+}
+
+function addSegment() {
+    if (!editorVideo) return;
+    const t = editorVideo.currentTime;
+    if (t < videoDuration - 0.5) {
+        segments.push({ start: t, end: Math.min(t + 3, videoDuration) });
+        updateTimeline();
+        showToast(`✅ Segment added at ${fmt(t)}`, 'success');
+    }
+}
+
+// ---------- Event Listeners ----------
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+});
+dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+});
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith('video/')) {
+        videoInput.files = files;
+        videoInput.dispatchEvent(new Event('change'));
+        showToast('📹 Video uploaded successfully!', 'success');
+    }
+});
+
+videoInput.addEventListener('change', () => {
+    const file = videoInput.files[0];
+    if (file) {
+        const url = URL.createObjectURL(file);
+        videoPreview.src = url;
+        videoPreviewContainer.style.display = 'block';
+        fileName.textContent = file.name;
+        showToast(`📹 Loaded: ${file.name}`, 'success');
+    }
+});
+
+musicInput.addEventListener('change', () => {
+    const file = musicInput.files[0];
+    if (file) {
+        musicFileName.textContent = '✅ ' + file.name;
+        showToast(`🎵 Loaded: ${file.name}`, 'success');
+    } else {
+        musicFileName.textContent = '';
+    }
+});
+
+generateBtn.addEventListener('click', uploadAndGenerate);
+editBtn.addEventListener('click', openEditor);
+youtubePublishBtn.addEventListener('click', () => {
+    if (!jobId) {
+        showToast('Generate a highlight first before publishing.', 'error');
+        return;
+    }
+    publishModal.classList.remove('hidden');
+    const title = document.getElementById('publishTitle');
+    const description = document.getElementById('publishDescription');
+    const tags = document.getElementById('publishTags');
+    title.value = title.value || 'ClipForge Highlight';
+    description.value = description.value || 'Generated by ClipForge';
+    tags.value = tags.value || 'clipforge,highlight,video';
+});
+
+publishMode.addEventListener('change', () => {
+    publishSchedule.disabled = publishMode.value === 'publish';
+    if (publishMode.value === 'publish') {
+        publishSchedule.value = '';
+    }
+});
+
+closePublishModal.addEventListener('click', () => publishModal.classList.add('hidden'));
+cancelPublishBtn.addEventListener('click', () => publishModal.classList.add('hidden'));
+
+const publishProgressText = document.getElementById('publishProgressText');
+const publishStatusLine = document.getElementById('publishStatusLine');
+const publishStageText = document.getElementById('publishStageText');
+const publishProgressFill = document.getElementById('publishProgressFill');
+let publishProgressTimer = null;
+
+function updatePublishProgress(percentage, statusText, stageLabel) {
+    if (publishProgressText) publishProgressText.textContent = `${percentage}%`;
+    if (publishStatusLine) publishStatusLine.textContent = statusText;
+    if (publishStageText) publishStageText.textContent = stageLabel;
+    if (publishProgressFill) publishProgressFill.style.width = `${percentage}%`;
+}
+
+function startPublishProgress() {
+    clearInterval(publishProgressTimer);
+    const stages = [
+        { target: 12, text: 'Preparing upload...', stage: 'Initialising' },
+        { target: 34, text: 'Uploading video...', stage: 'Uploading' },
+        { target: 60, text: 'Uploading metadata...', stage: 'Processing' },
+        { target: 82, text: 'Publishing to YouTube...', stage: 'Publishing' },
+        { target: 100, text: 'Finalising...', stage: 'Finishing' }
+    ];
+
+    let current = 4;
+    let stageIndex = 0;
+    updatePublishProgress(current, 'Preparing upload...', 'Initialising');
+
+    publishProgressTimer = setInterval(() => {
+        if (current >= 96) {
+            clearInterval(publishProgressTimer);
+            return;
+        }
+
+        current = Math.min(current + Math.random() * 14 + 7, 96);
+        while (stageIndex < stages.length - 1 && current >= stages[stageIndex].target) {
+            stageIndex += 1;
+        }
+
+        const activeStage = stages[Math.min(stageIndex, stages.length - 1)];
+        updatePublishProgress(Math.round(current), activeStage.text, activeStage.stage);
+    }, 450);
+}
+
+function stopPublishProgress() {
+    clearInterval(publishProgressTimer);
+    updatePublishProgress(100, 'Upload complete.', 'Done');
+}
+
+const setPublishLoadingState = (isLoading) => {
+    youtubePublishBtn.disabled = isLoading;
+    youtubePublishBtn.innerHTML = isLoading
+        ? '<span class="btn-spinner"></span> Publishing...'
+        : '<i class="fab fa-youtube"></i> Publish to YouTube';
+
+    publishLoadingOverlay.classList.toggle('hidden', !isLoading);
+
+    if (isLoading) {
+        startPublishProgress();
+    } else {
+        clearInterval(publishProgressTimer);
+        updatePublishProgress(0, 'Ready to publish', 'Idle');
+    }
+
+    const submitButton = publishForm.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = isLoading;
+        submitButton.textContent = isLoading ? 'Publishing...' : 'Continue';
+    }
+};
+
+publishForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    setPublishLoadingState(true);
+
+    try {
+        const formData = new FormData();
+        formData.append('job_id', jobId);
+        formData.append('title', document.getElementById('publishTitle').value.trim() || 'ClipForge Highlight');
+        formData.append('description', document.getElementById('publishDescription').value.trim() || 'Generated by ClipForge');
+        formData.append('tags', document.getElementById('publishTags').value.trim() || 'clipforge,highlight,video');
+        formData.append('publish_mode', publishMode.value);
+        formData.append('privacy_status', publishPrivacy.value);
+        if (publishMode.value === 'schedule' && publishSchedule.value) {
+            formData.append('schedule_for', publishSchedule.value);
+        }
+        const thumbnailFile = document.getElementById('publishThumbnail').files[0];
+        if (thumbnailFile) {
+            formData.append('thumbnail', thumbnailFile);
+        }
+
+        const res = await fetch('/api/youtube/publish', {
+            method: 'POST',
+            body: formData
+        });
+
+        let data = null;
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+            data = await res.json();
+        } else {
+            const text = await res.text();
+            throw new Error(text || 'Unexpected server response');
+        }
+
+        if (!res.ok) {
+            throw new Error(data.error || 'Publish failed');
+        }
+
+        stopPublishProgress();
+
+        if (publishMode.value === 'schedule') {
+            showToast('✅ Video scheduled for YouTube.', 'success');
+        } else {
+            showToast('✅ Published to YouTube!', 'success');
+        }
+    } catch (error) {
+        clearInterval(publishProgressTimer);
+        updatePublishProgress(0, error.message || 'Publish failed.', 'Error');
+        showToast(error.message, 'error');
+    } finally {
+        setTimeout(() => {
+            setPublishLoadingState(false);
+            publishModal.classList.add('hidden');
+            publishForm.reset();
+            document.getElementById('publishTitle').value = 'ClipForge Highlight';
+            document.getElementById('publishDescription').value = 'Generated by ClipForge';
+            document.getElementById('publishTags').value = 'clipforge,highlight,video';
+            document.getElementById('publishThumbnail').value = '';
+            publishSchedule.value = '';
+            publishMode.value = 'publish';
+            publishPrivacy.value = 'public';
+        }, 650);
+    }
+});
+resetBtn.addEventListener('click', resetProject);
+addSegmentBtn.addEventListener('click', addSegment);
+regenerateBtn.addEventListener('click', regenerateHighlight);
+cancelEditBtn.addEventListener('click', () => {
+    editorView.classList.add('hidden');
+    resultView.classList.remove('hidden');
+});
+
+timelineBar.addEventListener('click', (e) => {
+    if (e.target.closest('.handle')) return;
+    const rect = timelineBar.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const time = x * videoDuration;
+    if (editorVideo) editorVideo.currentTime = time;
+});
+
+editorVideo.addEventListener('timeupdate', () => {
+    currentTime = editorVideo.currentTime;
+    currentTimeDisplay.textContent = fmt(currentTime);
+    const pct = videoDuration ? (currentTime / videoDuration) * 100 : 0;
+    const indicator = document.getElementById('timeIndicator');
+    if (indicator) indicator.style.left = pct + '%';
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'a' && !editorView.classList.contains('hidden')) {
+        addSegment();
+    }
+});
+
+// ---------- Initialize ----------
+loadMusicLibrary();
+console.log('🎬 ClipForge Professional loaded successfully!');
+showToast('🎬 Welcome to ClipForge! Upload a video to get started.', 'info');
+</script>
+</body>
+</html>

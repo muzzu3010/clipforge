@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClipForge Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: #edf3ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      width: min(420px, 90vw);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.3);
+    }
+    h2 { margin-top: 0; }
+    label { display: block; margin-top: 14px; font-size: 14px; color: #c7d2e7; }
+    input {
+      width: 100%;
+      margin-top: 6px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      color: white;
+    }
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .error {
+      margin-top: 12px;
+      color: #ff9a9a;
+      font-size: 14px;
+    }
+    .alt {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      color: #b9c3d9;
+    }
+    a { color: #8ec5ff; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Create your account</h2>
+    <form method="POST">
+      <label>Username
+        <input type="text" name="username" required />
+      </label>
+      <label>Email
+        <input type="email" name="email" required />
+      </label>
+      <label>Password
+        <input type="password" name="password" required />
+      </label>
+      <button type="submit">Sign Up</button>
+    </form>
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+    <div class="alt">
+      Already have an account? <a href="/login">Login</a>
+    </div>
+  </div>
+</body>
+</html>
