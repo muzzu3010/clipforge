@@ -50,7 +50,7 @@ def get_env(*names, default=None):
 
 YOUTUBE_CLIENT_ID = get_env('YOUTUBE_CLIENT_ID', 'YOUTUBE_ClENT_ID', default=None)
 YOUTUBE_CLIENT_SECRET = get_env('YOUTUBE_CLIENT_SECRET', 'YOUTUBE_ClENT_SECRET', default=None)
-YOUTUBE_REDIRECT_URI = get_env('YOUTUBE_REDIRECT_URI', default='http://localhost:5000/oauth/youtube/callback')
+YOUTUBE_REDIRECT_URI = get_env('YOUTUBE_REDIRECT_URI', default='https://clipforge-xg13.onrender.com/oauth/youtube/callback')
 YOUTUBE_SCOPES = 'https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly'
 OUTPUT_DIR = os.path.join(BASE_DIR, 'output')
 TEMP_DIR = os.path.join(BASE_DIR, 'temp')
